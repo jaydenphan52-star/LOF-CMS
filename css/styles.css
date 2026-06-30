@@ -42,7 +42,7 @@ html, body {
 }
 
 .login-logo { margin-bottom: 2rem; }
-.login-logo img { width: 260px; height: auto; }
+.login-logo img { width: 260px; height: auto; mix-blend-mode: multiply; }
 .login-title { display: none; }
 .login-sub { color: var(--text2); margin-bottom: 1.75rem; font-size: .9rem; }
 
@@ -74,7 +74,7 @@ html, body {
   border-bottom: 1px solid var(--border);
   margin-bottom: 1.25rem;
 }
-.sidebar-logo img { width: 130px; height: auto; }
+.sidebar-logo img { width: 130px; height: auto; mix-blend-mode: multiply; }
 .sidebar-title { display: none; }
 .sidebar-sub { font-size: .72rem; color: var(--text3); margin-top: .4rem; }
 
