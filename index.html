@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Ofrenda Festival — CMS</title>
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ───────────────────────────────────────────── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🌼</div>
+    <h1 class="login-title">La Ofrenda Festival</h1>
+    <p class="login-sub">Fundraising & Outreach CMS</p>
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>
+      Sign in with Google
+    </button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ── MAIN APP ────────────────────────────────────────────────── -->
+<div id="app" style="display:none">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <span class="sidebar-logo">🌼</span>
+      <div>
+        <div class="sidebar-title">La Ofrenda</div>
+        <div class="sidebar-sub">Festival CMS</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <button class="nav-btn active" data-tab="contacts" onclick="switchTab('contacts')">
+        <span class="nav-icon">👥</span> Contacts
+      </button>
+      <button class="nav-btn" data-tab="reminders" onclick="switchTab('reminders')">
+        <span class="nav-icon">✅</span> Action Items
+      </button>
+      <button class="nav-btn" data-tab="email" onclick="switchTab('email')">
+        <span class="nav-icon">✉️</span> Bulk Email
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <span id="user-name" class="user-name"></span>
+      <button class="signout-btn" onclick="signOut()">Sign out</button>
+    </div>
+  </nav>
+
+  <!-- Content area -->
+  <main class="content">
+
+    <!-- ── CONTACTS TAB ── -->
+    <div id="tab-contacts" class="tab-panel">
+
+      <!-- Left column: list -->
+      <div class="list-col">
+        <div class="list-header">
+          <h2>Contacts & Sponsors</h2>
+          <button class="btn-primary" onclick="addContact()">+ Add Contact</button>
+        </div>
+        <div class="list-filters">
+          <input id="contact-search" type="search" placeholder="Search name, org, email…"
+            oninput="renderContactList(allContacts)" />
+          <select id="level-filter" onchange="renderContactList(allContacts)"></select>
+          <select id="status-filter" onchange="renderContactList(allContacts)"></select>
+        </div>
+        <div id="contact-list" class="contact-list"></div>
+      </div>
+
+      <!-- Right column: detail -->
+      <div class="detail-col">
+        <div id="no-selection" class="no-selection">
+          <span>Select a contact to view details</span>
+        </div>
+
+        <div id="detail-panel" style="display:none; flex-direction:column; height:100%; overflow-y:auto;">
+          <div class="detail-header">
+            <div>
+              <h2 id="detail-name"></h2>
+              <div id="detail-org" class="detail-org"></div>
+            </div>
+            <button class="btn-danger-sm" onclick="deleteContact()">Delete</button>
+          </div>
+
+          <!-- Edit fields -->
+          <section class="detail-section">
+            <h3>Contact Info</h3>
+            <div class="field-grid">
+              <label>Name<input id="edit-name" type="text" /></label>
+              <label>Organization<input id="edit-org" type="text" /></label>
+              <label>Email<input id="edit-email" type="email" /></label>
+              <label>Phone<input id="edit-phone" type="tel" /></label>
+              <label>Website<input id="edit-website" type="url" /></label>
+              <label>Sponsorship Level<select id="edit-level"></select></label>
+              <label>Status<select id="edit-status"></select></label>
+            </div>
+            <label class="full-label">Partnership Notes
+              <textarea id="edit-contact-notes" rows="3" placeholder="What was discussed, their interests, key context…"></textarea>
+            </label>
+            <button class="btn-primary" onclick="saveContactEdits()">Save Changes</button>
+          </section>
+
+          <!-- Communication notes -->
+          <section class="detail-section">
+            <h3>Communication History</h3>
+            <div id="notes-list"></div>
+            <div class="add-row">
+              <textarea id="new-note-input" rows="2" placeholder="Add a note about your last conversation…"></textarea>
+              <button class="btn-primary" onclick="addNote()">Add Note</button>
+            </div>
+          </section>
+
+          <!-- Reminders -->
+          <section class="detail-section">
+            <h3>Action Items</h3>
+            <div id="reminders-list"></div>
+            <div class="add-row reminder-add-row">
+              <input id="new-reminder-text" type="text" placeholder="Action item…" />
+              <input id="new-reminder-date" type="date" />
+              <button class="btn-primary" onclick="addReminder()">Add</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ACTION ITEMS TAB ── -->
+    <div id="tab-reminders" class="tab-panel" style="display:none; flex-direction:column; padding:2rem;">
+      <h2>All Action Items</h2>
+      <p class="tab-sub">Pending reminders across all contacts, sorted by due date.</p>
+      <div id="all-reminders-list" style="margin-top:1rem;"></div>
+    </div>
+
+    <!-- ── EMAIL TAB ── -->
+    <div id="tab-email" class="tab-panel" style="display:none; flex-direction:column; padding:0;">
+      <div class="email-layout">
+
+        <!-- Left: contact picker -->
+        <div class="email-contacts-col">
+          <div class="email-col-header">
+            <h3>Recipients</h3>
+            <div class="email-filter-row">
+              <select id="email-filter" onchange="filterEmailList()">
+                <option value="">All Contacts</option>
+                <option value="prospective">Not Yet Committed</option>
+                <option value="no-response">Reached Out (No Reply)</option>
+                <option value="committed">Committed</option>
+              </select>
+            </div>
+            <div class="email-select-row">
+              <button class="btn-sm" onclick="selectAllEmailContacts()">Select All</button>
+              <button class="btn-sm" onclick="clearEmailSelection()">Clear</button>
+              <span id="selected-count" class="selected-count">0 selected</span>
+            </div>
+          </div>
+          <div id="email-contact-list" class="email-contact-list"></div>
+        </div>
+
+        <!-- Right: compose -->
+        <div class="email-compose-col">
+          <div class="email-col-header">
+            <h3>Compose</h3>
+            <select id="email-template-select" onchange="loadEmailTemplate()"></select>
+          </div>
+          <label class="compose-label">Subject
+            <input id="email-subject" type="text" class="compose-input" />
+          </label>
+          <label class="compose-label">Body
+            <textarea id="email-body" class="compose-body" rows="14"></textarea>
+          </label>
+          <div class="compose-hint">Use <code>{{name}}</code> and <code>{{org}}</code> for personalization.</div>
+          <div class="compose-actions">
+            <button class="btn-secondary" onclick="previewEmail()">Preview</button>
+            <button class="btn-primary" onclick="sendEmails()">Open in Mail App →</button>
+          </div>
+          <div id="email-preview" class="email-preview" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- Scripts -->
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/contacts.js"></script>
+<script src="js/notes.js"></script>
+<script src="js/reminders.js"></script>
+<script src="js/email.js"></script>
+</body>
+</html>
