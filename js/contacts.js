@@ -64,6 +64,7 @@ async function openContact(id) {
   populateDetail(contact);
   await loadNotes(id);
   await loadReminders(id);
+  await loadOutreach(id);
 }
 
 function populateDetail(c) {

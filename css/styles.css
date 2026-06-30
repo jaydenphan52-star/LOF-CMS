@@ -335,6 +335,65 @@ input[type=checkbox] { accent-color: var(--orange); width: 15px; height: 15px; c
 .toast.show { opacity: 1; transform: translateY(0); }
 .toast.error { border-color: var(--red); color: var(--red); }
 
+/* ── Outreach ─────────────────────────────────────────────────── */
+.section-header-row { display: flex; align-items: center; justify-content: space-between; }
+
+.outreach-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: .85rem; margin-bottom: .5rem;
+}
+.outreach-header {
+  display: flex; align-items: center; gap: .5rem; margin-bottom: .4rem;
+}
+.outreach-date { font-size: .78rem; color: var(--text3); }
+.outreach-actions { margin-left: auto; display: flex; gap: .2rem; }
+.outreach-subject { font-weight: 600; font-size: .875rem; color: var(--text); margin-bottom: .4rem; }
+.outreach-meta { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: .3rem; }
+.outreach-status { font-size: .78rem; font-weight: 600; }
+.outreach-status.responded { color: var(--green); }
+.outreach-status.no-response { color: var(--text3); }
+.outreach-followup { font-size: .78rem; color: var(--gold); }
+.outreach-followup.overdue { color: var(--red); font-weight: 600; }
+.outreach-notes { font-size: .82rem; color: var(--text2); white-space: pre-wrap; line-height: 1.5; margin-top: .35rem; }
+
+.outreach-type-badge {
+  font-size: .68rem; font-weight: 700; padding: .15rem .45rem;
+  border-radius: 4px; text-transform: uppercase; letter-spacing: .04em;
+}
+.type-email { background: var(--orange-dim); color: var(--orange); }
+.type-call { background: var(--green-dim); color: var(--green); }
+.type-meeting { background: var(--pink-dim); color: var(--pink); }
+.type-text { background: var(--gold-dim); color: var(--gold); }
+.type-other { background: var(--surface2); color: var(--text2); }
+
+/* ── Modal ────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(44,26,14,0.35);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+}
+.modal-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; width: 520px; max-width: 95vw;
+  box-shadow: var(--shadow); display: flex; flex-direction: column;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+}
+.modal-header h3 { font-size: 1rem; font-weight: 700; color: var(--text); }
+.modal-body { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: .75rem; }
+.modal-footer {
+  display: flex; justify-content: flex-end; gap: .75rem;
+  padding: 1rem 1.5rem; border-top: 1px solid var(--border);
+}
+
+/* ── Email row selected state ─────────────────────────────────── */
+.email-contact-row.selected { background: var(--orange-dim); }
+.email-contact-row { cursor: pointer; }
+
+/* ── Reminder edit form ───────────────────────────────────────── */
+.reminder-edit-form { display: flex; align-items: center; gap: .4rem; flex: 1; }
+
 /* ── Scrollbar ────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }

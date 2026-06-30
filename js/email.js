@@ -77,17 +77,35 @@ async function loadEmailContactList(filter) {
 function renderEmailContactList(contacts) {
   const list = document.getElementById('email-contact-list');
   list.innerHTML = contacts.map(c => `
-    <label class="email-contact-row ${!c.email ? 'no-email' : ''}">
+    <div class="email-contact-row ${!c.email ? 'no-email' : ''} ${selectedEmailContacts.has(c.id) ? 'selected' : ''}"
+      onclick="${c.email ? `toggleEmailContactRow('${c.id}')` : ''}">
       <input type="checkbox" value="${c.id}"
         ${selectedEmailContacts.has(c.id) ? 'checked' : ''}
         ${!c.email ? 'disabled' : ''}
+        onclick="event.stopPropagation()"
         onchange="toggleEmailContact('${c.id}', this.checked)">
       <span class="email-contact-name">${c.name || '—'}</span>
       <span class="email-contact-org">${c.org_name || ''}</span>
       <span class="email-contact-addr">${c.email || '<em>no email</em>'}</span>
       <span class="badge status-badge status-${slugify(c.status)}">${c.status || ''}</span>
-    </label>
+    </div>
   `).join('') || '<div class="empty-state">No contacts match this filter.</div>';
+  updateSelectedCount();
+}
+
+function toggleEmailContactRow(id) {
+  const isSelected = selectedEmailContacts.has(id);
+  if (isSelected) selectedEmailContacts.delete(id);
+  else selectedEmailContacts.add(id);
+  // update checkbox and row highlight without full re-render
+  const rows = document.querySelectorAll(`#email-contact-list .email-contact-row`);
+  rows.forEach(row => {
+    const cb = row.querySelector('input[type=checkbox]');
+    if (cb && cb.value === id) {
+      cb.checked = !isSelected;
+      row.classList.toggle('selected', !isSelected);
+    }
+  });
   updateSelectedCount();
 }
 

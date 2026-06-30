@@ -13,15 +13,42 @@ function renderReminders(reminders) {
   el.innerHTML = reminders.length === 0
     ? '<div class="empty-state">No action items.</div>'
     : reminders.map(r => `
-      <div class="reminder-item ${r.done ? 'done' : ''} ${isOverdue(r) ? 'overdue' : ''}">
+      <div class="reminder-item ${r.done ? 'done' : ''} ${isOverdue(r) ? 'overdue' : ''}" id="rem-${r.id}">
         <input type="checkbox" ${r.done ? 'checked' : ''} onchange="toggleReminder('${r.id}', this.checked)">
-        <div class="reminder-body">
+        <div class="reminder-body" id="rem-body-${r.id}">
           <span class="reminder-text">${escHtml(r.text)}</span>
-          ${r.due_date ? `<span class="reminder-due">${formatDate(r.due_date)}</span>` : ''}
+          ${r.due_date ? `<span class="reminder-due ${isOverdue(r) ? 'overdue-text' : ''}">${formatDate(r.due_date)}</span>` : ''}
         </div>
+        <div class="reminder-edit-form" id="rem-edit-${r.id}" style="display:none; flex:1; gap:.4rem; align-items:center;">
+          <input type="text" value="${escHtml(r.text)}" id="rem-edit-text-${r.id}" style="flex:1;" />
+          <input type="date" value="${r.due_date || ''}" id="rem-edit-date-${r.id}" style="width:130px;" />
+          <button class="btn-primary" style="padding:.35rem .6rem; font-size:.78rem;" onclick="saveReminderEdit('${r.id}')">Save</button>
+          <button class="btn-secondary" style="padding:.35rem .6rem; font-size:.78rem;" onclick="cancelReminderEdit('${r.id}')">✕</button>
+        </div>
+        <button class="icon-btn" onclick="startReminderEdit('${r.id}')">✏️</button>
         <button class="icon-btn danger" onclick="deleteReminder('${r.id}')">✕</button>
       </div>
     `).join('');
+}
+
+function startReminderEdit(id) {
+  document.getElementById(`rem-body-${id}`).style.display = 'none';
+  document.getElementById(`rem-edit-${id}`).style.display = 'flex';
+}
+
+function cancelReminderEdit(id) {
+  document.getElementById(`rem-body-${id}`).style.display = 'flex';
+  document.getElementById(`rem-edit-${id}`).style.display = 'none';
+}
+
+async function saveReminderEdit(id) {
+  const text = document.getElementById(`rem-edit-text-${id}`).value.trim();
+  const due_date = document.getElementById(`rem-edit-date-${id}`).value || null;
+  if (!text) return;
+  const { error } = await _sb.from('reminders').update({ text, due_date }).eq('id', id);
+  if (error) { showToast('Error saving.', 'error'); return; }
+  await loadReminders(activeContactId);
+  showToast('Updated.');
 }
 
 async function addReminder() {

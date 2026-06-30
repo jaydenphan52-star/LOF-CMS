@@ -114,9 +114,18 @@
             <button class="btn-primary" onclick="saveContactEdits()">Save Changes</button>
           </section>
 
+          <!-- Outreach tracker -->
+          <section class="detail-section">
+            <div class="section-header-row">
+              <h3>Outreach History</h3>
+              <button class="btn-primary" style="padding:.35rem .75rem; font-size:.8rem;" onclick="openOutreachModal()">+ Log Outreach</button>
+            </div>
+            <div id="outreach-list"></div>
+          </section>
+
           <!-- Communication notes -->
           <section class="detail-section">
-            <h3>Communication History</h3>
+            <h3>Notes</h3>
             <div id="notes-list"></div>
             <div class="add-row">
               <textarea id="new-note-input" rows="2" placeholder="Add a note about your last conversation…"></textarea>
@@ -195,6 +204,52 @@
   </main>
 </div>
 
+<!-- ── OUTREACH MODAL ──────────────────────────────────────────── -->
+<div id="outreach-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeOutreachModal()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="outreach-modal-title">Log Outreach</h3>
+      <button class="icon-btn" onclick="closeOutreachModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-grid">
+        <label>Type
+          <select id="outreach-type">
+            <option>Email</option>
+            <option>Call</option>
+            <option>Meeting</option>
+            <option>Text</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>Date Sent
+          <input type="date" id="outreach-sent-date" />
+        </label>
+        <label style="grid-column:1/-1;">Subject / Description
+          <input type="text" id="outreach-subject" placeholder="e.g. Initial sponsorship outreach" />
+        </label>
+        <label>Follow-up Date
+          <input type="date" id="outreach-followup-date" />
+        </label>
+        <label style="align-self:center; flex-direction:row; align-items:center; gap:.5rem; padding-top:1.2rem;">
+          <input type="checkbox" id="outreach-responded" style="width:16px;height:16px;" />
+          They responded
+        </label>
+        <label>Response Date
+          <input type="date" id="outreach-response-date" />
+        </label>
+        <label style="grid-column:1/-1;">Notes
+          <textarea id="outreach-notes" rows="3" placeholder="What was said, next steps, key details…"></textarea>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeOutreachModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveOutreach()">Save</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
 
 <!-- Scripts -->
@@ -203,6 +258,7 @@
 <script src="js/contacts.js"></script>
 <script src="js/notes.js"></script>
 <script src="js/reminders.js"></script>
+<script src="js/outreach.js"></script>
 <script src="js/email.js"></script>
 </body>
 </html>
