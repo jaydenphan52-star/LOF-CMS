@@ -5,7 +5,9 @@
       "Bash(open /Users/jaydenphan/Desktop/Claude/LOF/index.html)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(git pull *)",
+      "Bash(git stash *)"
     ]
   }
 }
