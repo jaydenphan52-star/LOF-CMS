@@ -1,5 +1,5 @@
-// Whitelist — only this email can access the CMS
-const ALLOWED_EMAIL = 'jaydenphan52@gmail.com';
+// Whitelist — only these emails can access the CMS
+const ALLOWED_EMAILS = ['jaydenphan52@gmail.com', 'ruben@fuchilafresheners.com'];
 
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
@@ -13,7 +13,7 @@ function signOut() {
 }
 
 _auth.onAuthStateChanged(user => {
-  if (user && user.email === ALLOWED_EMAIL) {
+  if (user && ALLOWED_EMAILS.includes(user.email)) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
     document.getElementById('user-name').textContent = user.displayName || user.email;
