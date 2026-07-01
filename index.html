@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>La Ofrenda Festival — CMS</title>
-  <link rel="stylesheet" href="css/styles.css?v=6" />
+  <link rel="stylesheet" href="css/styles.css?v=7" />
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -35,7 +35,7 @@
 <!-- ── MAIN APP ────────────────────────────────────────────────── -->
 <div id="app" style="display:none">
 
-  <!-- Sidebar -->
+  <!-- Sidebar (desktop) -->
   <nav class="sidebar">
     <div class="sidebar-brand">
       <span class="sidebar-logo"><img src="logo.png" alt="La Ofrenda Festival" /></span>
@@ -59,6 +59,25 @@
       <span id="user-name" class="user-name"></span>
       <button class="signout-btn" onclick="signOut()">Sign out</button>
     </div>
+  </nav>
+
+  <!-- Mobile top bar -->
+  <div class="mobile-topbar">
+    <img src="logo.png" alt="La Ofrenda Festival" class="mobile-logo" />
+    <button class="signout-btn" onclick="signOut()">Sign out</button>
+  </div>
+
+  <!-- Mobile bottom nav -->
+  <nav class="mobile-bottomnav">
+    <button class="mobile-nav-btn active" data-tab="contacts" onclick="switchTab('contacts')">
+      <span>👥</span><span>Contacts</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab="reminders" onclick="switchTab('reminders')">
+      <span>✅</span><span>Actions</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab="email" onclick="switchTab('email')">
+      <span>✉️</span><span>Email</span>
+    </button>
   </nav>
 
   <!-- Content area -->
@@ -89,6 +108,7 @@
         </div>
 
         <div id="detail-panel" style="display:none; flex-direction:column; height:100%; overflow-y:auto;">
+          <button class="mobile-back-btn" onclick="mobileBackToList()">← Back</button>
           <div class="detail-header">
             <div>
               <h2 id="detail-name"></h2>
@@ -254,12 +274,12 @@
 <div id="toast" class="toast"></div>
 
 <!-- Scripts -->
-<script src="js/app.js?v=4"></script>
-<script src="js/auth.js?v=6"></script>
-<script src="js/contacts.js?v=4"></script>
-<script src="js/notes.js?v=4"></script>
-<script src="js/reminders.js?v=4"></script>
-<script src="js/outreach.js?v=4"></script>
-<script src="js/email.js?v=4"></script>
+<script src="js/app.js?v=7"></script>
+<script src="js/auth.js?v=7"></script>
+<script src="js/contacts.js?v=7"></script>
+<script src="js/notes.js?v=7"></script>
+<script src="js/reminders.js?v=7"></script>
+<script src="js/outreach.js?v=7"></script>
+<script src="js/email.js?v=7"></script>
 </body>
 </html>

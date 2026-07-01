@@ -61,6 +61,9 @@ async function openContact(id) {
 
   document.getElementById('detail-panel').style.display = 'flex';
   document.getElementById('no-selection').style.display = 'none';
+  // Mobile: hide list, show detail
+  document.querySelector('.list-col').classList.add('mobile-hidden');
+  document.querySelector('.detail-col').classList.add('mobile-show');
   populateDetail(contact);
   await loadNotes(id);
   await loadReminders(id);

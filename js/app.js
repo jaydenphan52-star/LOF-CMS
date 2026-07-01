@@ -16,13 +16,22 @@ function showToast(msg, type = 'success') {
 }
 
 function switchTab(tab) {
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn, .mobile-nav-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
   document.getElementById('tab-' + tab).style.display = 'flex';
-  document.querySelector(`.nav-btn[data-tab="${tab}"]`).classList.add('active');
+  document.querySelectorAll(`[data-tab="${tab}"]`).forEach(b => b.classList.add('active'));
 
   if (tab === 'reminders') loadAllReminders();
   if (tab === 'email') initEmailTab();
+}
+
+function mobileBackToList() {
+  document.getElementById('detail-panel').style.display = 'none';
+  document.getElementById('no-selection').style.display = 'flex';
+  document.querySelector('.list-col').classList.remove('mobile-hidden');
+  document.querySelector('.detail-col').classList.remove('mobile-show');
+  activeContactId = null;
+  renderContactList(allContacts);
 }
 
 async function initApp() {
