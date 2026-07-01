@@ -1,6 +1,3 @@
-// Whitelist — only these emails can access the CMS
-const ALLOWED_EMAILS = ['jaydenphan52@gmail.com', 'ruben@fuchilafresheners.com'];
-
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
   _auth.signInWithPopup(provider).catch(err => {
@@ -12,19 +9,32 @@ function signOut() {
   _auth.signOut();
 }
 
-_auth.onAuthStateChanged(user => {
-  if (user && ALLOWED_EMAILS.includes(user.email)) {
+_auth.onAuthStateChanged(async user => {
+  if (!user) {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    return;
+  }
+
+  // Check Firestore admins collection, fallback to hardcoded list during transition
+  const FALLBACK = ['jaydenphan52@gmail.com', 'ruben@fuchilafresheners.com'];
+  let allowed = FALLBACK.includes(user.email);
+
+  try {
+    const doc = await _db.collection('admins').doc(user.email).get();
+    if (doc.exists) allowed = true;
+  } catch (e) {
+    // Firestore unavailable — rely on fallback
+  }
+
+  if (allowed) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
     document.getElementById('user-name').textContent = user.displayName || user.email;
     initApp();
-  } else if (user) {
-    // Wrong account
+  } else {
     _auth.signOut();
     document.getElementById('login-error').textContent = 'Access denied. This CMS is private.';
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('app').style.display = 'none';
-  } else {
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
   }
