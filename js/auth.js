@@ -9,6 +9,8 @@ function signOut() {
   _auth.signOut();
 }
 
+const ALLOWED_EMAILS = ['jaydenphan52@gmail.com', 'ruben@fuchilafresheners.com'];
+
 _auth.onAuthStateChanged(async user => {
   if (!user) {
     document.getElementById('login-screen').style.display = 'flex';
@@ -16,26 +18,28 @@ _auth.onAuthStateChanged(async user => {
     return;
   }
 
-  // Check Firestore admins collection, fallback to hardcoded list during transition
-  const FALLBACK = ['jaydenphan52@gmail.com', 'ruben@fuchilafresheners.com'];
-  let allowed = FALLBACK.includes(user.email);
+  // Let hardcoded users in immediately, then also check Firestore for any extras
+  if (ALLOWED_EMAILS.includes(user.email)) {
+    grantAccess(user);
+    return;
+  }
 
+  // For everyone else, check Firestore admins collection
   try {
     const doc = await _db.collection('admins').doc(user.email).get();
-    if (doc.exists) allowed = true;
-  } catch (e) {
-    // Firestore unavailable — rely on fallback
-  }
+    if (doc.exists) { grantAccess(user); return; }
+  } catch (e) {}
 
-  if (allowed) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
-    document.getElementById('user-name').textContent = user.displayName || user.email;
-    initApp();
-  } else {
-    _auth.signOut();
-    document.getElementById('login-error').textContent = 'Access denied. This CMS is private.';
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('app').style.display = 'none';
-  }
+  // Not allowed
+  _auth.signOut();
+  document.getElementById('login-error').textContent = 'Access denied. This CMS is private.';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
 });
+
+function grantAccess(user) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('user-name').textContent = user.displayName || user.email;
+  initApp();
+}
